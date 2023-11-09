@@ -100,11 +100,11 @@ In some cases, the user will log in to the Authorization Server using an externa
 
 # Token Revocation
 
-Upon receiving a token revocation request, implementations MUST support the revocation of refresh tokens and active user sessions, and SHOULD support the revocation of access tokens (see {{implementation-notes}}).
-
 A revocation request is a POST request to the Global Token Revocation endpoint. This URL MUST conform to the rules given in {{RFC6749}}, Section 3.1.
 
 The means to obtain the location of the revocation endpoint is out of the scope of this specification.  For example, the authorization server may publish documentation of the location of the endpoint, or may manually register it with tools that will use it.
+
+Upon receiving a token revocation request, implementations MUST support the revocation of refresh tokens and active user sessions, and SHOULD support the revocation of access tokens (see {{implementation-notes}}).
 
 
 
