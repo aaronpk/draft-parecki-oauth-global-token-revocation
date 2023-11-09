@@ -130,7 +130,7 @@ The following example requests all tokens for a user identified by an email addr
       }
     }
 
-To request revocation of all tokens for a user identified by a user ID at the authorization server, use the "opaque subject" identifier:
+To request revocation of all tokens for a user identified by a user ID at the Authorization Server, use the "opaque subject" identifier:
 
     POST /global-token-revocation
     Host: example.com
@@ -143,6 +143,13 @@ To request revocation of all tokens for a user identified by a user ID at the au
         "id": "U1234567890"
       }
     }
+
+## Revocation Expectations
+
+Upon receiving a revocation request, authorizing the request, and validating the identified user, the Authorization Server MUST revoke all active refresh tokens, and invalidate all active sessions.
+
+If possible, the authorization server SHOULD invalidate all access tokens, although this might not be technically feasible, see {{implementation-notes}}.
+
 
 
 ## Revocation Response
