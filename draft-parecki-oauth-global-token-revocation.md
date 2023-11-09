@@ -2,7 +2,7 @@
 title: "Global Token Revocation"
 category: std
 
-docname: draft-parecki-global-token-revocation-latest
+docname: draft-parecki-oauth-global-token-revocation-latest
 submissiontype: IETF
 number:
 date:
