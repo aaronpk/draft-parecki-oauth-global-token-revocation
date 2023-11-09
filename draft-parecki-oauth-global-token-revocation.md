@@ -197,7 +197,7 @@ TODO Security
 
 ## OAuth Authorization Server Metadata
 
-IANA has (TBD) registered the following values in the IANA "OAuth Authorization Server Metadata" registry of {{IANA.OAuth.Parameters}} established by {{RFC8414}}.
+IANA has (TBD) registered the following values in the IANA "OAuth Authorization Server Metadata" registry of {{IANA.oauth-parameters}} established by {{RFC8414}}.
 
 
 **Metadata Name**: `global_token_revocation_endpoint`
@@ -211,7 +211,7 @@ IANA has (TBD) registered the following values in the IANA "OAuth Authorization 
 
 **Metadata Name**: `global_token_revocation_endpoint_auth_methods_supported`
 
-**Metadata Description**: OPTIONAL. JSON array containing a list of client authentication methods supported by this introspection endpoint.  The valid client authentication method values are those registered in the IANA "OAuth Token Endpoint Authentication Methods" registry {{IANA.OAuth.Parameters}} or those registered in the IANA "OAuth Access Token Types" registry {{IANA.OAuth.Parameters}}.  (These values are and will remain distinct, due to Section 7.2.)  If omitted, the set of supported authentication methods MUST be determined by other means.
+**Metadata Description**: OPTIONAL. JSON array containing a list of client authentication methods supported by this introspection endpoint.  The valid client authentication method values are those registered in the IANA "OAuth Token Endpoint Authentication Methods" registry {{IANA.oauth-parameters}} or those registered in the IANA "OAuth Access Token Types" registry {{IANA.oauth-parameters}}.  (These values are and will remain distinct, due to Section 7.2.)  If omitted, the set of supported authentication methods MUST be determined by other means.
 
 **Change Controller**: IESG
 
