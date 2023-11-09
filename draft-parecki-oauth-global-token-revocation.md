@@ -31,11 +31,14 @@ author:
 
 normative:
   RFC6749:
+  RFC8414:
+  IANA.OAuth.Parameters:
   I-D.ietf-secevent-subject-identifiers:
 
 informative:
   RFC6750:
   RFC7523:
+  RFC9068:
   OpenID:
     title: OpenID Connect Core 1.0
     target: https://openid.net/specs/openid-connect-core-1_0.html
