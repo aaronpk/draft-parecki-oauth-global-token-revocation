@@ -32,7 +32,7 @@ author:
 normative:
   RFC6749:
   RFC8414:
-  IANA.OAuth.Parameters:
+  IANA.oauth-parameters:
   I-D.ietf-secevent-subject-identifiers:
 
 informative:
