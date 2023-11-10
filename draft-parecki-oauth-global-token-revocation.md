@@ -100,12 +100,15 @@ In some cases, the user will log in to the Authorization Server using an externa
 
 # Token Revocation
 
-A revocation request is a POST request to the Global Token Revocation endpoint. This URL MUST conform to the rules given in {{RFC6749}}, Section 3.1.
+A revocation request is a POST request to the Global Token Revocation endpoint, which starts the process of revoking all tokens for the identified subject.
 
-The means to obtain the location of the revocation endpoint is out of the scope of this specification.  For example, the authorization server may publish documentation of the location of the endpoint, or may manually register it with tools that will use it.
+## Revocation Endpoint
 
-Upon receiving a token revocation request, implementations MUST support the revocation of refresh tokens and active user sessions, and SHOULD support the revocation of access tokens (see {{implementation-notes}}).
+The Global Token Revocation endpoint is a URL at the authorization server which accepts HTTP POST requests with parameters in the HTTP request message body using the `application/json` format. The Global Token Revocation endpoint URL MUST use the `https` scheme.
 
+If the authorization server supports OAuth Server Metadata ({{RFC8414}}), the authorization server SHOULD include the URL of their Global Token Revocation endpoint in their authorization server metadata document using the `global_token_revocation_endpoint` parameter as defined in {{authorization-server-metadata}}.
+
+The authorization server MAY alternatively register the endpoint with tools that will use it.
 
 
 ## Revocation Request
@@ -144,12 +147,13 @@ To request revocation of all tokens for a user identified by a user ID at the Au
       }
     }
 
-## Revocation Expectations
+## Revocation Expectations {#revocation-expectations}
 
-Upon receiving a revocation request, authorizing the request, and validating the identified user, the Authorization Server MUST revoke all active refresh tokens, and invalidate all active sessions.
+Upon receiving a revocation request, authorizing the request, and validating the identified user, the Authorization Server:
 
-If possible, the authorization server SHOULD invalidate all access tokens, although this might not be technically feasible, see {{implementation-notes}}.
-
+* MUST revoke all active refresh tokens
+* SHOULD invalidate all access tokens, although it is recognized that it might not be technically feasible to invalidate access tokens (see {{access-tokens}} below)
+* MUST NOT issue new access tokens or refresh tokens without re-authenticating the user
 
 
 ## Revocation Response
@@ -163,7 +167,7 @@ To indicate that the request was successful and revocation of the requested set 
 
 The following HTTP response codes can be used to indicate various error conditions:
 
-* **400 Bad Request**: The request was malformed, e.g. an unrecognized type of subject identifier.
+* **400 Bad Request**: The request was malformed, e.g. an unrecognized or unsupported type of subject identifier.
 * **401 Unauthorized**: Authentication provided was invalid.
 * **403 Forbidden**: Insufficient authorization, e.g. missing scopes.
 * **404 User Not Found**: The user indicated by the subject identifier was not found.
@@ -171,7 +175,7 @@ The following HTTP response codes can be used to indicate various error conditio
 
 
 
-# Implementation Notes {#implementation-notes}
+# Revocation of Access Tokens {#access-tokens}
 
 OAuth 2.0 allows deployment flexibility with respect to the style of
    access tokens.  The access tokens may be self-contained (e.g. {{RFC9068}}) so that a
@@ -186,6 +190,17 @@ While these are not the only options, they illustrate the
    server is able to revoke an access token by removing it from storage. In the former case, without storing tokens, it may be impossible to revoke tokens without taking additional measures.
 
 For this reason, revocation of access tokens is optional in this specification, since it may post too significant of a burden for implementers. It is not required to revoke access tokens to be able to return a success code to the caller.
+
+
+# Authorization Server Metadata
+
+The following authorization server metadata parameters {{RFC8414}} are introduced to signal the server's capability and policy with respect to Global Token Revocation.
+
+"global_token_revocation_endpoint":
+: The URL of the authorization server's global token revocation endpoint.
+
+"global_token_revocation_endpoint_auth_methods_supported":
+: OPTIONAL. JSON array containing a list of client authentication methods supported by this introspection endpoint.  The valid client authentication method values are those registered in the IANA "OAuth Token Endpoint Authentication Methods" registry {{IANA.oauth-parameters}} or those registered in the IANA "OAuth Access Token Types" registry {{IANA.oauth-parameters}}.  (These values are and will remain distinct, due to Section 7.2.)  If omitted, the set of supported authentication methods MUST be determined by other means.
 
 
 # Security Considerations
@@ -211,7 +226,7 @@ IANA has (TBD) registered the following values in the IANA "OAuth Authorization 
 
 **Metadata Name**: `global_token_revocation_endpoint_auth_methods_supported`
 
-**Metadata Description**: OPTIONAL. JSON array containing a list of client authentication methods supported by this introspection endpoint.  The valid client authentication method values are those registered in the IANA "OAuth Token Endpoint Authentication Methods" registry {{IANA.oauth-parameters}} or those registered in the IANA "OAuth Access Token Types" registry {{IANA.oauth-parameters}}.  (These values are and will remain distinct, due to Section 7.2.)  If omitted, the set of supported authentication methods MUST be determined by other means.
+**Metadata Description**: OPTIONAL. Indicates the list of client authentication methods supported by this endpoint.
 
 **Change Controller**: IESG
 
@@ -224,6 +239,12 @@ IANA has (TBD) registered the following values in the IANA "OAuth Authorization 
 # Document History
 
 (( To be removed from the final specification ))
+
+-01
+
+* Clarified revocation expectations
+* Better definition of endpoint
+* Added section defining endpoint in Authorization Server Metadata
 
 -00
 
