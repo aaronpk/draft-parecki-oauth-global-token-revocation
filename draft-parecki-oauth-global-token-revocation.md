@@ -244,9 +244,55 @@ IANA has (TBD) registered the following values in the IANA "OAuth Authorization 
 
 --- back
 
+# Relationship to Other Logout Specifications
+
+## RFC7009: Token Revocation
+
+OAuth 2.0 Token Revocation {{RFC7009}} defines an endpoint for authorization servers that an OAuth client can use to notify the authorization server that a previously-obtained access or refresh token is no longer needed.
+
+The request is made by the OAuth client. The input to the Token Revocation request is the token itself, as well as the client's own authentication credentials.
+
+This differs from the Global Token Revocation endpoint which does not take a token as an input, but instead takes a user identifier as input. It is not called by OAuth clients, but is instead called by an external party such as a security monitoring tool or an identity provider that the user used to authenticate at the authorization server.
+
+## OpenID Connect Front-Channel Logout
+
+[OpenID Connect Front-Channel Logout](https://openid.net/specs/openid-connect-frontchannel-1_0.html) provides a mechanism for an OpenID Provider to log users out of Relying Parties by redirecting the user agent.
+
+While the logout request is the same direction as this draft describes, this relies on the redirection of the user agent, so is only applicable when the user is actively interacting with the application in a web browser.
+
+The Global Token Revocation request works regardless of whether the user is actively using the application, and is also applicable to non-web based applications.
+
+## OpenID Connect Back-Channel Logout
+
+[OpenID Connect Back-Channel Logout](https://openid.net/specs/openid-connect-backchannel-1_0.html) provides a mechanism for an OpenID Provider to log users out of a Relying Party by making a back-channel POST request containing the user identifier of the user to log out.
+
+This is the most similar existing logout specification to Global Token Revocation. However, there are still a few key differences that make it insufficient for the use cases enabled by Global Token Revocation.
+
+OpenID Connect Back-Channel Logout requires Relying Parties to clear state of any sessions for the user, but doesn't mention anything about access tokens. It also says that refresh tokens issued with the `offline_access` scope "SHOULD NOT be revoked". This is a concretely different outcome than is described by Global Token Revocation, which requires the revocation of all refresh tokens for the user regardless of whether the refresh token was issued with the `offline_access` scope.
+
+Additionally, OpenID Connect Back-Channel Logout assumes that the Relying Party implements OpenID Connect, which creates implementation challenges to use it when the Relying Party actually integrates with the identity provider using other specifications such as SAML.
+
+Global Token Revocation works regardless of the protocol that the user uses to authenticate, so works equally well with OpenID Connect and SAML integrations.
+
+## Shared Signals Framework
+
+The Shared Signals Framework at the OpenID Foundation provides two specifications that have functionality related to session and token revocation.
+
+[Continuous Access Evaluation Profile (CAEP)](https://openid.net/specs/openid-caep-specification-1_0.html) defines several event types that can be sent between cooperating parties. In particular, the "Session Revoked" event can be sent from an identity provider to an authorization server when the user's session at the identity provider was revoked. The main difference between this and the Global Token Revocation request is that teh CAEP event is a signal that may or may not be acted upon by the receiver, whereas the Global Token Revocation request is a command that has a defined list of expected outcomes.
+
+[Risk Incident Sharing and Coordination (RISC)](https://openid.net/specs/openid-risc-profile-specification-1_0.html) defines events that have somewhat stronger defined meanings compared to CAEP. In particular, the "Account Disabled" event has clear meaning and strongly implies that a receiver should also disable the specified account. However, RISC also has a mechanism for a user to opt out of sending events for their account, so it does not provide the same level of assurance as a Global Token Revocation request.
+
+Lastly, it is more complex to set up a receiver for CAEP and RISC events compared to a receiver for the Global Token Revocation request, so if the receiver is only interested in supporting the revocation use cases, it is much simpler to support the single POST request described in this draft.
+
+
 # Document History
 
 (( To be removed from the final specification ))
+
+-02
+
+* Added security consideration around enumeration of user accounts
+* Added an appendix describing the differences between this and related logout specifications
 
 -01
 
