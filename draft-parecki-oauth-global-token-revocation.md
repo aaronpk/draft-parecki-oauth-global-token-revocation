@@ -262,7 +262,7 @@ IANA has (TBD) registered the following values in the IANA "OAuth Authorization 
 
 --- back
 
-# Relationship to Other Logout Specifications
+# Relationship to Related Specifications
 
 ## RFC7009: Token Revocation
 
