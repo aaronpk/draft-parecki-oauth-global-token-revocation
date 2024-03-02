@@ -32,8 +32,8 @@ author:
 normative:
   RFC6749:
   RFC8414:
+  RFC9493:
   IANA.oauth-parameters:
-  I-D.ietf-secevent-subject-identifiers:
 
 informative:
   RFC6750:
@@ -63,9 +63,9 @@ Global Token Revocation enables parties such as a security incident management t
 
 An OAuth Authorization Server issues tokens in response to a user authorizing a client. A party external to the OAuth Authorization Server may wish to instruct the Authorization Server to revoke all tokens belonging to a particular user, and prevent the server from issuing new tokens until the user re-authenticates.
 
-For example, a security incident management tool may detect anomalous behaviour on a user's account, or if the user logged in through an enterprise Identity Provider, the Identity Provider may want to revoke all of a user's tokens on a security incident or on the employee's termination.
+For example, a security incident management tool may detect anomalous behaviour on a user's account, or if the user logged in through an enterprise Identity Provider, the Identity Provider may want to revoke all of a user's tokens in the event of a security incident or on the employee's termination.
 
-This specification describes an API endpoint so that an authorization server can accept requests from external parties to revoke all tokens associated with a given user.
+This specification describes an API endpoint on an Authorization Server that can accept requests from external parties to revoke all tokens associated with a given user.
 
 
 # Conventions and Definitions
@@ -113,13 +113,13 @@ The authorization server MAY alternatively register the endpoint with tools that
 
 ## Revocation Request
 
-The request is a POST request with an `application/json` body containing a single property `subject`,  the value of which is a Security Event Token Subject Identifier as defined in {{I-D.ietf-secevent-subject-identifiers}}.
+The request is a POST request with an `application/json` body containing a single property `subject`, the value of which is a Security Event Token Subject Identifier as defined in "Subject Identifiers for Security Event Tokens" {{RFC9493}}.
 
 In practice, this means the value of `subject` is a JSON object with a property `format`, and at least one additional property depending on the value of `format`.
 
-The request MUST also be authenticated, the particular authentication method and means by which the authentication is established is out of scope of this specification, but may include an OAuth 2.0 Bearer Token ({{RFC6750}}) or a JWT ({{RFC7523}}).
+The request MUST also be authenticated, the particular authentication method and means by which the authentication is established is out of scope of this specification, but may include OAuth 2.0 Bearer Token {{RFC6750}} or a JWT {{RFC7523}}.
 
-The following example requests all tokens for a user identified by an email address to be revoked:
+The following example requests that all tokens for a user identified by an email address be revoked:
 
     POST /global-token-revocation
     Host: example.com
@@ -133,7 +133,7 @@ The following example requests all tokens for a user identified by an email addr
       }
     }
 
-To request revocation of all tokens for a user identified by a user ID at the Authorization Server, use the "opaque subject" identifier:
+If the user identifier at the authorization server is known by the system making the revocation request, the request can use the "Opaque Identifer" format to provide the user identifier:
 
     POST /global-token-revocation
     Host: example.com
@@ -143,9 +143,25 @@ To request revocation of all tokens for a user identified by a user ID at the Au
     {
       "subject": {
         "format": "opaque",
-        "id": "U1234567890"
+        "id": "e193177dfdc52e3dd03f78c"
       }
     }
+
+If it is expected that the authorization server knows about the user identifier at the IdP, the request can use the "Issuer and Subject Identifier" format:
+
+    POST /global-token-revocation
+    Host: example.com
+    Content-Type: application/json
+    Authorization: Bearer f5641763544a7b24b08e4f74045
+
+    {
+      "subject": {
+        "format": "iss_sub",
+        "iss": "https://issuer.example.com/",
+        "sub": "af19c476f1dc4470fa3d0d9a25"
+      }
+    }
+
 
 ## Revocation Expectations {#revocation-expectations}
 
@@ -160,8 +176,9 @@ Upon receiving a revocation request, authorizing the request, and validating the
 
 This specification indicates success and error conditions by using HTTP response codes, and does not define the response body format or content.
 
-To indicate that the request was successful and revocation of the requested set of tokens has begun, the server returns an HTTP 204 response.
+### Successful Response
 
+To indicate that the request was successful and revocation of the requested set of tokens has begun, the server returns an HTTP 204 response.
 
 ### Error Response
 
@@ -178,18 +195,18 @@ The following HTTP response codes can be used to indicate various error conditio
 # Revocation of Access Tokens {#access-tokens}
 
 OAuth 2.0 allows deployment flexibility with respect to the style of
-   access tokens.  The access tokens may be self-contained (e.g. {{RFC9068}}) so that a
-   resource server needs no further interaction with an authorization
-   server issuing these tokens to perform an authorization decision of
-   the client requesting access to a protected resource.  A system
-   design may, however, instead use access tokens that are handles
-   referring to authorization data stored at the authorization server.
+access tokens.  The access tokens may be self-contained (e.g. {{RFC9068}}) so that a
+resource server needs no further interaction with an authorization
+server issuing these tokens to perform an authorization decision of
+the client requesting access to a protected resource.  A system
+design may, however, instead use access tokens that are handles (also known as "reference tokens")
+referring to authorization data stored at the authorization server.
 
 While these are not the only options, they illustrate the
-   implications for revocation.  In the latter case of reference tokens, the authorization
-   server is able to revoke an access token by removing it from storage. In the former case, without storing tokens, it may be impossible to revoke tokens without taking additional measures.
+implications for revocation.  In the latter case of reference tokens, the authorization
+server is able to revoke an access token by removing it from storage. In the former case, without storing tokens, it may be impossible to revoke tokens without taking additional measures.
 
-For this reason, revocation of access tokens is optional in this specification, since it may post too significant of a burden for implementers. It is not required to revoke access tokens to be able to return a success code to the caller.
+For this reason, revocation of access tokens is optional in this specification, since it may pose too significant of a burden for implementers. It is not required to revoke access tokens to be able to return a success code to the caller.
 
 
 # Authorization Server Metadata
@@ -214,6 +231,7 @@ If the tool making the request is compromised, and the attacker can impersonate 
 To mitigate some of the concerns of providing such a powerful API endpoint, the users that a particular client can request revocation for SHOULD be limited, and the authentication of the request SHOULD be used to scope the possible user revocation list to only users authorized to the client.
 
 For example, a multi-tenant identity provider that uses different signing keys for users assciated with different tenants, can also use the same signing keys to authenticate revocation requests, such as creating a JWT to use as client authentication as described in {{RFC7523}}. This enables the authorization server receiving the request to only accept revocation requests for users that are associated with the particular tenant at the identity provider.
+
 
 
 # IANA Considerations
