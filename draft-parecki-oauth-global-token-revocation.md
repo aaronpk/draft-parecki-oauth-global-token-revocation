@@ -20,7 +20,7 @@ venue:
   mail: "oauth@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/oauth/"
   github: "aaronpk/global-token-revocation"
-  latest: "https://aaronpk.github.io/global-token-revocation/draft-parecki-oauth-global-token-revocation.html"
+  latest: "https://drafts.aaronpk.com/global-token-revocation/draft-parecki-oauth-global-token-revocation.html"
 
 author:
  -
