@@ -127,7 +127,7 @@ The following example requests that all tokens for a user identified by an email
     Authorization: Bearer f5641763544a7b24b08e4f74045
 
     {
-      "subject": {
+      "sub_id": {
         "format": "email",
         "email": "user@example.com"
       }
@@ -141,7 +141,7 @@ If the user identifier at the authorization server is known by the system making
     Authorization: Bearer f5641763544a7b24b08e4f74045
 
     {
-      "subject": {
+      "sub_id": {
         "format": "opaque",
         "id": "e193177dfdc52e3dd03f78c"
       }
@@ -155,7 +155,7 @@ If it is expected that the authorization server knows about the user identifier 
     Authorization: Bearer f5641763544a7b24b08e4f74045
 
     {
-      "subject": {
+      "sub_id": {
         "format": "iss_sub",
         "iss": "https://issuer.example.com/",
         "sub": "af19c476f1dc4470fa3d0d9a25"
@@ -230,7 +230,7 @@ If the tool making the request is compromised, and the attacker can impersonate 
 
 To mitigate some of the concerns of providing such a powerful API endpoint, the users that a particular client can request revocation for SHOULD be limited, and the authentication of the request SHOULD be used to scope the possible user revocation list to only users authorized to the client.
 
-For example, a multi-tenant identity provider that uses different signing keys for users assciated with different tenants, can also use the same signing keys to authenticate revocation requests, such as creating a JWT to use as client authentication as described in {{RFC7523}}. This enables the authorization server receiving the request to only accept revocation requests for users that are associated with the particular tenant at the identity provider.
+For example, a multi-tenant identity provider that uses different signing keys for users associated with different tenants, can also use the same signing keys to authenticate revocation requests, such as creating a JWT to use as client authentication as described in {{RFC7523}}. This enables the authorization server receiving the request to only accept revocation requests for users that are associated with the particular tenant at the identity provider.
 
 
 
@@ -296,7 +296,7 @@ Global Token Revocation works regardless of the protocol that the user uses to a
 
 The Shared Signals Framework at the OpenID Foundation provides two specifications that have functionality related to session and token revocation.
 
-[Continuous Access Evaluation Profile (CAEP)](https://openid.net/specs/openid-caep-specification-1_0.html) defines several event types that can be sent between cooperating parties. In particular, the "Session Revoked" event can be sent from an identity provider to an authorization server when the user's session at the identity provider was revoked. The main difference between this and the Global Token Revocation request is that teh CAEP event is a signal that may or may not be acted upon by the receiver, whereas the Global Token Revocation request is a command that has a defined list of expected outcomes.
+[Continuous Access Evaluation Profile (CAEP)](https://openid.net/specs/openid-caep-specification-1_0.html) defines several event types that can be sent between cooperating parties. In particular, the "Session Revoked" event can be sent from an identity provider to an authorization server when the user's session at the identity provider was revoked. The main difference between this and the Global Token Revocation request is that the CAEP event is a signal that may or may not be acted upon by the receiver, whereas the Global Token Revocation request is a command that has a defined list of expected outcomes.
 
 [Risk Incident Sharing and Coordination (RISC)](https://openid.net/specs/openid-risc-profile-specification-1_0.html) defines events that have somewhat stronger defined meanings compared to CAEP. In particular, the "Account Disabled" event has clear meaning and strongly implies that a receiver should also disable the specified account. However, RISC also has a mechanism for a user to opt out of sending events for their account, so it does not provide the same level of assurance as a Global Token Revocation request.
 
