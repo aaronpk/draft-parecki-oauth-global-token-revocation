@@ -40,6 +40,7 @@ informative:
   RFC7009:
   RFC7523:
   RFC9068:
+  I-D.ietf-oauth-status-list:
   OpenID:
     title: OpenID Connect Core 1.0
     target: https://openid.net/specs/openid-connect-core-1_0.html
@@ -111,7 +112,7 @@ If the authorization server supports OAuth Server Metadata ({{RFC8414}}), the au
 The authorization server MAY alternatively register the endpoint with tools that will use it.
 
 
-## Revocation Request
+## Revocation Request {#revocation-request}
 
 The request is a POST request with an `application/json` body containing a single property `subject`, the value of which is a Security Event Token Subject Identifier as defined in "Subject Identifiers for Security Event Tokens" {{RFC9493}}.
 
@@ -169,7 +170,7 @@ Upon receiving a revocation request, authorizing the request, and validating the
 
 * MUST revoke all active refresh tokens
 * SHOULD invalidate all access tokens, although it is recognized that it might not be technically feasible to invalidate access tokens (see {{access-tokens}} below)
-* MUST NOT issue new access tokens or refresh tokens without re-authenticating the user
+* MUST re-authenticate the user before issuing new access tokens or refresh tokens
 
 
 ## Revocation Response
@@ -204,7 +205,7 @@ referring to authorization data stored at the authorization server.
 
 While these are not the only options, they illustrate the
 implications for revocation.  In the latter case of reference tokens, the authorization
-server is able to revoke an access token by removing it from storage. In the former case, without storing tokens, it may be impossible to revoke tokens without taking additional measures.
+server is able to revoke an access token by removing it from storage. In the former case, without storing tokens, it may be impossible to revoke tokens without taking additional measures. One such measure is to use {{I-D.ietf-oauth-status-list}} to maintain a distributed and easily-compressed list of token revocation statuses.
 
 For this reason, revocation of access tokens is optional in this specification, since it may pose too significant of a burden for implementers. It is not required to revoke access tokens to be able to return a success code to the caller.
 
@@ -222,16 +223,33 @@ The following authorization server metadata parameters {{RFC8414}} are introduce
 
 # Security Considerations
 
+## Authentication of Revocation Request {#revocation-request-authentication}
+
+While {{revocation-request}} requires that the revocation request is an authenticated request, the specifics of the authentication are out of scope of this specification.
+
+Since the revocation request ultimately has wide-reaching effects (a user is expected to be logged out of all devices), this presents a new Denial of Service attack vector. As such, the authentication used for this request SHOULD be narrowly scoped to avoid granting unnecessary privileges to the caller.
+
+For example, if using OAuth Bearer Tokens, the token SHOULD be issued with a single scope that enables it to perform the revocation request, and no other type of token issued should include this scope.
+
+If the authorization server is multi-tenant (supports multiple customers) through different identity providers, each identity provider SHOULD use its own scoped credential that is only authorized to revoke tokens for users within the same tenant.
+
+
 ## Enumeration of User Accounts
 
 Typically, an API that accepts a user identifier and returns different statuses depending on whether the user exists would provide an attack vector allowing enumeration of user accounts. This specification does require a "User Not Found" response, so would normally fall under this category. However, requests to the endpoint defined by this specification are required to be authenticated, so this is not considered a public endpoint.
 
-If the tool making the request is compromised, and the attacker can impersonate the requests from this tool (either by coercing the tool to make the request, or by extracting the credentials), then the attacker would be able to enumerate user accounts. However, since the request is not just testing the presence of a user account, but actually revoking the tokens associated with the user if successful, this would likely be easily visible in any audit logs as many users tokens would be revoked in a short period of time.
+If the tool making the request is compromised, and the attacker can impersonate the requests from this tool (either by coercing the tool to make the request, or by extracting the credentials), then the attacker would be able to enumerate user accounts. However, since the request is not just testing the presence of a user account, but actually revoking the tokens associated with the user if successful, this would likely be easily visible in any audit logs as many users' tokens would be revoked in a short period of time.
 
-To mitigate some of the concerns of providing such a powerful API endpoint, the users that a particular client can request revocation for SHOULD be limited, and the authentication of the request SHOULD be used to scope the possible user revocation list to only users authorized to the client.
+To mitigate some of the concerns of providing such a powerful API endpoint, the users that a particular client can request revocation for SHOULD be limited, and the authentication of the request SHOULD be used to scope the possible user revocation list to only users authorized to the client as described in {{revocation-request-authentication}}.
 
 For example, a multi-tenant identity provider that uses different signing keys for users associated with different tenants, can also use the same signing keys to authenticate revocation requests, such as creating a JWT to use as client authentication as described in {{RFC7523}}. This enables the authorization server receiving the request to only accept revocation requests for users that are associated with the particular tenant at the identity provider.
 
+
+## Malicious Authorization Server
+
+From the point of view of an identity provider that supports integrations with multiple downstream applications, there is an opportunity for a downstream application to maliciously set up a Global Token Revocation endpoint to harvest user identifiers and authentication of the revocation requests.
+
+Similarly as described in {{revocation-request-authentication}} above, each integration SHOULD be using separate authentication credentials, and each credential SHOULD be scoped as narrowly as possible, such that a malicious server that receives this authentication cannot replay it anywhere else to perform any actions on other systems.
 
 
 # IANA Considerations
@@ -307,6 +325,12 @@ Lastly, it is more complex to set up a receiver for CAEP and RISC events compare
 
 (( To be removed from the final specification ))
 
+-03
+
+* Renamed property from `subject` to `sub_id` for consistency with JWT claim name defined in RFC9493
+* Added reference to draft-ietf-oauth-status-list
+* Added additional security considerations for authentication of the revocation request and malicious authorization servers
+
 -02
 
 * Added security consideration around enumeration of user accounts
@@ -326,6 +350,6 @@ Lastly, it is more complex to set up a receiver for CAEP and RISC events compare
 # Acknowledgments
 {:numbered="false"}
 
-The authors would like to thank the following people for their contributions and reviews of this specification: George Fletcher, Karl McGuinness, Mike Jones.
+The authors would like to thank the following people for their contributions and reviews of this specification: Apoorva Deshpande, George Fletcher, Karl McGuinness, Mike Jones.
 
 
