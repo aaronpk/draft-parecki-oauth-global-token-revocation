@@ -1,0 +1,100 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2024-06-23T00:50:34.097401+00:00",
+  "repo": "aaronpk/global-token-revocation",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 1,
+      "id": "I_kwDOKrR-1856Qdxy",
+      "title": "Add a section describing how this differs from existing logout specs",
+      "url": "https://github.com/aaronpk/global-token-revocation/issues/1",
+      "state": "CLOSED",
+      "author": "aaronpk",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2023-12-20T19:21:14Z",
+      "updatedAt": "2024-03-02T01:05:19Z",
+      "closedAt": "2024-03-02T01:05:19Z",
+      "comments": []
+    }
+  ],
+  "pulls": [
+    {
+      "number": 2,
+      "id": "PR_kwDOKrR-185pcx9n",
+      "title": "sub_id claim changes",
+      "url": "https://github.com/aaronpk/global-token-revocation/pull/2",
+      "state": "MERGED",
+      "author": "appsdesh",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "- sub_id claim changes\r\n- Typo fixes",
+      "createdAt": "2024-03-13T01:36:42Z",
+      "updatedAt": "2024-03-13T23:42:18Z",
+      "baseRepository": "aaronpk/global-token-revocation",
+      "baseRefName": "main",
+      "baseRefOid": "8cda6053071bcd566ec7f5a68e10c266eac52331",
+      "headRepository": "appsdesh/global-token-revocation",
+      "headRefName": "sub-id-and-typo",
+      "headRefOid": "30fa9e7251c2f8a0bb799f88a4dac837aa914e5b",
+      "closedAt": "2024-03-13T23:42:18Z",
+      "mergedAt": "2024-03-13T23:42:18Z",
+      "mergedBy": "aaronpk",
+      "mergeCommit": {
+        "oid": "9ba4421e519e0065ba02f12c0a350c83be0008b2"
+      },
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}
