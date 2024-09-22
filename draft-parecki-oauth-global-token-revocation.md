@@ -66,7 +66,7 @@ An OAuth Authorization Server issues tokens in response to a user authorizing a 
 
 For example, a security incident management tool may detect anomalous behaviour on a user's account, or if the user logged in through an enterprise Identity Provider, the Identity Provider may want to revoke all of a user's tokens in the event of a security incident or on the employee's termination.
 
-This specification describes an API endpoint on an Authorization Server that can accept requests from external parties to revoke all tokens associated with a given user.
+This specification describes a new API endpoint on an Authorization Server that can accept requests from external parties to revoke all tokens associated with a given user.
 
 
 # Conventions and Definitions
@@ -95,13 +95,13 @@ In a typical OAuth deployment, the OAuth client obtains tokens from the authoriz
 
 For example, a mobile chat application is an OAuth Client, and obtains tokens from its backend server which stores the chat messages. The mobile chat backend plays the OAuth roles of "Resource Server" and "Authorization Server".
 
-In some cases, the user will log in to the Authorization Server using an external (e.g. enterprise) Identity Provider. In that case, when a user logs in to the chat application, the backend server may play the role of an OAuth client (or OpenID or SAML relying party) to the Identity Provider in a new authorization or authentication flow.
+In some cases, the user will log in to the Authorization Server using an external (e.g. enterprise) Identity Provider. In that case, when a user logs in to the chat application, the backend server may play the role of an OAuth client (or OpenID or SAML "relying party") to the Identity Provider in a new authorization or authentication flow.
 
 
 
 # Token Revocation
 
-A revocation request is a POST request to the Global Token Revocation endpoint, which starts the process of revoking all tokens for the identified subject.
+A revocation request is a POST request containing a subject identifier to the Global Token Revocation endpoint, which starts the process of revoking all tokens for the identified subject.
 
 ## Revocation Endpoint
 
@@ -114,11 +114,11 @@ The authorization server MAY alternatively register the endpoint with tools that
 
 ## Revocation Request {#revocation-request}
 
-The request is a POST request with an `application/json` body containing a single property `subject`, the value of which is a Security Event Token Subject Identifier as defined in "Subject Identifiers for Security Event Tokens" {{RFC9493}}.
+The request is a POST request with an `application/json` body containing a single property `sub_id`, the value of which is a Security Event Token Subject Identifier as defined in "Subject Identifiers for Security Event Tokens" {{RFC9493}}.
 
-In practice, this means the value of `subject` is a JSON object with a property `format`, and at least one additional property depending on the value of `format`.
+In practice, this means the value of `sub_id` is a JSON object with a property `format`, and at least one additional property depending on the value of `format`.
 
-The request MUST also be authenticated, the particular authentication method and means by which the authentication is established is out of scope of this specification, but may include OAuth 2.0 Bearer Token {{RFC6750}} or a JWT {{RFC7523}}.
+The request MUST also be authenticated, the particular authentication method and means by which the authentication is established is out of scope of this specification, but may include OAuth 2.0 Bearer Token {{RFC6750}} or a client authentication JWT {{RFC7523}}.
 
 The following example requests that all tokens for a user identified by an email address be revoked:
 
@@ -238,7 +238,7 @@ If the authorization server is multi-tenant (supports multiple customers) throug
 
 Typically, an API that accepts a user identifier and returns different statuses depending on whether the user exists would provide an attack vector allowing enumeration of user accounts. This specification does require a "User Not Found" response, so would normally fall under this category. However, requests to the endpoint defined by this specification are required to be authenticated, so this is not considered a public endpoint.
 
-If the tool making the request is compromised, and the attacker can impersonate the requests from this tool (either by coercing the tool to make the request, or by extracting the credentials), then the attacker would be able to enumerate user accounts. However, since the request is not just testing the presence of a user account, but actually revoking the tokens associated with the user if successful, this would likely be easily visible in any audit logs as many users' tokens would be revoked in a short period of time.
+If the tool making the request is compromised, and the attacker can impersonate the requests from this tool (either by coercing the tool to make the request, or by extracting the credentials), then the attacker would be able to enumerate user accounts. However, since the request is not just testing the presence of a user account, but actually revoking the tokens associated with the user if successful, this would likely be easily visible in any audit logs, as many users' tokens would be revoked in a short period of time.
 
 To mitigate some of the concerns of providing such a powerful API endpoint, the users that a particular client can request revocation for SHOULD be limited, and the authentication of the request SHOULD be used to scope the possible user revocation list to only users authorized to the client as described in {{revocation-request-authentication}}.
 
@@ -306,7 +306,9 @@ This is the most similar existing logout specification to Global Token Revocatio
 
 OpenID Connect Back-Channel Logout requires Relying Parties to clear state of any sessions for the user, but doesn't mention anything about access tokens. It also says that refresh tokens issued with the `offline_access` scope "SHOULD NOT be revoked". This is a concretely different outcome than is described by Global Token Revocation, which requires the revocation of all refresh tokens for the user regardless of whether the refresh token was issued with the `offline_access` scope.
 
-Additionally, OpenID Connect Back-Channel Logout assumes that the Relying Party implements OpenID Connect, which creates implementation challenges to use it when the Relying Party actually integrates with the identity provider using other specifications such as SAML.
+OpenID Connect Back-Channel Logout also assumes that the Relying Party implements OpenID Connect, which creates implementation challenges to use it when the Relying Party actually integrates with the identity provider using other specifications such as SAML.
+
+Additionally, OpenID Connect Back-Channel Logout identifies the user using the `sub` claim of an ID token. This limits the applicability, since there is no mechanism to identify the user by email address or other identifier that might be known between the identity provider and authorization server. Global Token Revocation instead relies on Security Event Token Subject Identifiers ({{RFC9493}}) which provide multiple options for identifying the user.
 
 Global Token Revocation works regardless of the protocol that the user uses to authenticate, so works equally well with OpenID Connect and SAML integrations.
 
@@ -324,6 +326,11 @@ Lastly, it is more complex to set up a receiver for CAEP and RISC events compare
 # Document History
 
 (( To be removed from the final specification ))
+
+-04
+
+* Edits for clarity
+* Fixed prose description renaming `subject` to `sub_id`
 
 -03
 
