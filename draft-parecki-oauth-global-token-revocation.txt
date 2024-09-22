@@ -4,8 +4,8 @@
 
 Web Authorization Protocol                                    A. Parecki
 Internet-Draft                                                      Okta
-Intended status: Standards Track                           14 March 2024
-Expires: 15 September 2024
+Intended status: Standards Track                       22 September 2024
+Expires: 26 March 2025
 
 
                         Global Token Revocation
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 September 2024.
+   This Internet-Draft will expire on 26 March 2025.
 
 Copyright Notice
 
@@ -115,7 +115,7 @@ Table of Contents
    revoke all of a user's tokens in the event of a security incident or
    on the employee's termination.
 
-   This specification describes an API endpoint on an Authorization
+   This specification describes a new API endpoint on an Authorization
    Server that can accept requests from external parties to revoke all
    tokens associated with a given user.
 
@@ -158,14 +158,14 @@ Table of Contents
    In some cases, the user will log in to the Authorization Server using
    an external (e.g. enterprise) Identity Provider.  In that case, when
    a user logs in to the chat application, the backend server may play
-   the role of an OAuth client (or OpenID or SAML relying party) to the
-   Identity Provider in a new authorization or authentication flow.
+   the role of an OAuth client (or OpenID or SAML "relying party") to
+   the Identity Provider in a new authorization or authentication flow.
 
 3.  Token Revocation
 
-   A revocation request is a POST request to the Global Token Revocation
-   endpoint, which starts the process of revoking all tokens for the
-   identified subject.
+   A revocation request is a POST request containing a subject
+   identifier to the Global Token Revocation endpoint, which starts the
+   process of revoking all tokens for the identified subject.
 
 3.1.  Revocation Endpoint
 
@@ -186,18 +186,18 @@ Table of Contents
 3.2.  Revocation Request
 
    The request is a POST request with an application/json body
-   containing a single property subject, the value of which is a
-   Security Event Token Subject Identifier as defined in "Subject
-   Identifiers for Security Event Tokens" [RFC9493].
+   containing a single property sub_id, the value of which is a Security
+   Event Token Subject Identifier as defined in "Subject Identifiers for
+   Security Event Tokens" [RFC9493].
 
-   In practice, this means the value of subject is a JSON object with a
+   In practice, this means the value of sub_id is a JSON object with a
    property format, and at least one additional property depending on
    the value of format.
 
    The request MUST also be authenticated, the particular authentication
    method and means by which the authentication is established is out of
    scope of this specification, but may include OAuth 2.0 Bearer Token
-   [RFC6750] or a JWT [RFC7523].
+   [RFC6750] or a client authentication JWT [RFC7523].
 
    The following example requests that all tokens for a user identified
    by an email address be revoked:
@@ -374,7 +374,7 @@ Table of Contents
    attacker would be able to enumerate user accounts.  However, since
    the request is not just testing the presence of a user account, but
    actually revoking the tokens associated with the user if successful,
-   this would likely be easily visible in any audit logs as many users'
+   this would likely be easily visible in any audit logs, as many users'
    tokens would be revoked in a short period of time.
 
    To mitigate some of the concerns of providing such a powerful API
@@ -438,7 +438,7 @@ Table of Contents
 
    [IANA.oauth-parameters]
               IANA, "OAuth Parameters",
-              <http://www.iana.org/assignments/oauth-parameters>.
+              <https://www.iana.org/assignments/oauth-parameters>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -468,9 +468,9 @@ Table of Contents
    [I-D.ietf-oauth-status-list]
               Looker, T., Bastian, P., and C. Bormann, "Token Status
               List", Work in Progress, Internet-Draft, draft-ietf-oauth-
-              status-list-02, 3 March 2024,
+              status-list-03, 8 July 2024,
               <https://datatracker.ietf.org/doc/html/draft-ietf-oauth-
-              status-list-02>.
+              status-list-03>.
 
    [OpenID]   Sakimura, N., Bradley, J., Jones, M., de Medeiros, B., and
               C. Mortimore, "OpenID Connect Core 1.0", November 2014,
@@ -551,10 +551,18 @@ A.3.  OpenID Connect Back-Channel Logout
    the user regardless of whether the refresh token was issued with the
    offline_access scope.
 
-   Additionally, OpenID Connect Back-Channel Logout assumes that the
-   Relying Party implements OpenID Connect, which creates implementation
+   OpenID Connect Back-Channel Logout also assumes that the Relying
+   Party implements OpenID Connect, which creates implementation
    challenges to use it when the Relying Party actually integrates with
    the identity provider using other specifications such as SAML.
+
+   Additionally, OpenID Connect Back-Channel Logout identifies the user
+   using the sub claim of an ID token.  This limits the applicability,
+   since there is no mechanism to identify the user by email address or
+   other identifier that might be known between the identity provider
+   and authorization server.  Global Token Revocation instead relies on
+   Security Event Token Subject Identifiers ([RFC9493]) which provide
+   multiple options for identifying the user.
 
    Global Token Revocation works regardless of the protocol that the
    user uses to authenticate, so works equally well with OpenID Connect
@@ -595,6 +603,12 @@ A.4.  Shared Signals Framework
 Appendix B.  Document History
 
    (( To be removed from the final specification ))
+
+   -04
+
+   *  Edits for clarity
+
+   *  Fixed prose description renaming subject to sub_id
 
    -03
 

@@ -9,25 +9,24 @@
 <meta content="
        Global Token Revocation enables parties such as a security incident management tool or an external Identity Provider to send a request to an Authorization Server to indicate that it should revoke all of the user's existing tokens and require that the user re-authenticates before issuing new tokens. 
     " name="description">
-<meta content="xml2rfc 3.20.0" name="generator">
+<meta content="xml2rfc 3.23.1" name="generator">
 <meta content="oauth" name="keyword">
 <meta content="token revocation" name="keyword">
 <meta content="logout" name="keyword">
 <meta content="draft-parecki-oauth-global-token-revocation-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.20.0
-    Python 3.11.8
+  xml2rfc 3.23.1
+    Python 3.12.6
     ConfigArgParse 1.7
-    google-i18n-address 3.1.0
+    google-i18n-address 3.1.1
     intervaltree 3.1.0
-    Jinja2 3.1.2
-    lxml 4.9.3
-    platformdirs 4.2.0
+    Jinja2 3.1.4
+    lxml 4.9.4
+    platformdirs 4.3.6
     pycountry 22.3.5
     PyYAML 6.0.1
-    requests 2.31.0
-    setuptools 68.2.2
-    six 1.16.0
+    requests 2.32.3
+    setuptools 70.3.0
     wcwidth 0.2.13
 -->
 <link href="draft-parecki-oauth-global-token-revocation.xml" rel="alternate" type="application/rfc+xml">
@@ -1027,11 +1026,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Global Token Revocation</td>
-<td class="right">March 2024</td>
+<td class="right">September 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Parecki</td>
-<td class="center">Expires 15 September 2024</td>
+<td class="center">Expires 26 March 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1044,12 +1043,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-parecki-oauth-global-token-revocation-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-03-14" class="published">14 March 2024</time>
+<time datetime="2024-09-22" class="published">22 September 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-09-15">15 September 2024</time></dd>
+<dd class="expires"><time datetime="2025-03-26">26 March 2025</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1099,7 +1098,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 15 September 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 26 March 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1243,7 +1242,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
       </h2>
 <p id="section-1-1">An OAuth Authorization Server issues tokens in response to a user authorizing a client. A party external to the OAuth Authorization Server may wish to instruct the Authorization Server to revoke all tokens belonging to a particular user, and prevent the server from issuing new tokens until the user re-authenticates.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">For example, a security incident management tool may detect anomalous behaviour on a user's account, or if the user logged in through an enterprise Identity Provider, the Identity Provider may want to revoke all of a user's tokens in the event of a security incident or on the employee's termination.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">This specification describes an API endpoint on an Authorization Server that can accept requests from external parties to revoke all tokens associated with a given user.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-3">This specification describes a new API endpoint on an Authorization Server that can accept requests from external parties to revoke all tokens associated with a given user.<a href="#section-1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1278,7 +1277,7 @@ the Authorization Server or OpenID Provider that is used for End-User authentica
         </h3>
 <p id="section-2.2-1">In a typical OAuth deployment, the OAuth client obtains tokens from the authorization server when a user logs in and authorizes the client. In many cases, the method by which a user logs in at the authorization server is through an external identity provider.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
 <p id="section-2.2-2">For example, a mobile chat application is an OAuth Client, and obtains tokens from its backend server which stores the chat messages. The mobile chat backend plays the OAuth roles of "Resource Server" and "Authorization Server".<a href="#section-2.2-2" class="pilcrow">¶</a></p>
-<p id="section-2.2-3">In some cases, the user will log in to the Authorization Server using an external (e.g. enterprise) Identity Provider. In that case, when a user logs in to the chat application, the backend server may play the role of an OAuth client (or OpenID or SAML relying party) to the Identity Provider in a new authorization or authentication flow.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
+<p id="section-2.2-3">In some cases, the user will log in to the Authorization Server using an external (e.g. enterprise) Identity Provider. In that case, when a user logs in to the chat application, the backend server may play the role of an OAuth client (or OpenID or SAML "relying party") to the Identity Provider in a new authorization or authentication flow.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1288,7 +1287,7 @@ the Authorization Server or OpenID Provider that is used for End-User authentica
       <h2 id="name-token-revocation">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-token-revocation" class="section-name selfRef">Token Revocation</a>
       </h2>
-<p id="section-3-1">A revocation request is a POST request to the Global Token Revocation endpoint, which starts the process of revoking all tokens for the identified subject.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-1">A revocation request is a POST request containing a subject identifier to the Global Token Revocation endpoint, which starts the process of revoking all tokens for the identified subject.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <div id="revocation-endpoint">
 <section id="section-3.1">
         <h3 id="name-revocation-endpoint">
@@ -1304,9 +1303,9 @@ the Authorization Server or OpenID Provider that is used for End-User authentica
         <h3 id="name-revocation-request">
 <a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-revocation-request" class="section-name selfRef">Revocation Request</a>
         </h3>
-<p id="section-3.2-1">The request is a POST request with an <code>application/json</code> body containing a single property <code>subject</code>, the value of which is a Security Event Token Subject Identifier as defined in "Subject Identifiers for Security Event Tokens" <span>[<a href="#RFC9493" class="cite xref">RFC9493</a>]</span>.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
-<p id="section-3.2-2">In practice, this means the value of <code>subject</code> is a JSON object with a property <code>format</code>, and at least one additional property depending on the value of <code>format</code>.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
-<p id="section-3.2-3">The request <span class="bcp14">MUST</span> also be authenticated, the particular authentication method and means by which the authentication is established is out of scope of this specification, but may include OAuth 2.0 Bearer Token <span>[<a href="#RFC6750" class="cite xref">RFC6750</a>]</span> or a JWT <span>[<a href="#RFC7523" class="cite xref">RFC7523</a>]</span>.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<p id="section-3.2-1">The request is a POST request with an <code>application/json</code> body containing a single property <code>sub_id</code>, the value of which is a Security Event Token Subject Identifier as defined in "Subject Identifiers for Security Event Tokens" <span>[<a href="#RFC9493" class="cite xref">RFC9493</a>]</span>.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">In practice, this means the value of <code>sub_id</code> is a JSON object with a property <code>format</code>, and at least one additional property depending on the value of <code>format</code>.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">The request <span class="bcp14">MUST</span> also be authenticated, the particular authentication method and means by which the authentication is established is out of scope of this specification, but may include OAuth 2.0 Bearer Token <span>[<a href="#RFC6750" class="cite xref">RFC6750</a>]</span> or a client authentication JWT <span>[<a href="#RFC7523" class="cite xref">RFC7523</a>]</span>.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 <p id="section-3.2-4">The following example requests that all tokens for a user identified by an email address be revoked:<a href="#section-3.2-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-3.2-5">
 <pre>
@@ -1480,7 +1479,7 @@ server is able to revoke an access token by removing it from storage. In the for
 <a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-enumeration-of-user-account" class="section-name selfRef">Enumeration of User Accounts</a>
         </h3>
 <p id="section-6.2-1">Typically, an API that accepts a user identifier and returns different statuses depending on whether the user exists would provide an attack vector allowing enumeration of user accounts. This specification does require a "User Not Found" response, so would normally fall under this category. However, requests to the endpoint defined by this specification are required to be authenticated, so this is not considered a public endpoint.<a href="#section-6.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.2-2">If the tool making the request is compromised, and the attacker can impersonate the requests from this tool (either by coercing the tool to make the request, or by extracting the credentials), then the attacker would be able to enumerate user accounts. However, since the request is not just testing the presence of a user account, but actually revoking the tokens associated with the user if successful, this would likely be easily visible in any audit logs as many users' tokens would be revoked in a short period of time.<a href="#section-6.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.2-2">If the tool making the request is compromised, and the attacker can impersonate the requests from this tool (either by coercing the tool to make the request, or by extracting the credentials), then the attacker would be able to enumerate user accounts. However, since the request is not just testing the presence of a user account, but actually revoking the tokens associated with the user if successful, this would likely be easily visible in any audit logs, as many users' tokens would be revoked in a short period of time.<a href="#section-6.2-2" class="pilcrow">¶</a></p>
 <p id="section-6.2-3">To mitigate some of the concerns of providing such a powerful API endpoint, the users that a particular client can request revocation for <span class="bcp14">SHOULD</span> be limited, and the authentication of the request <span class="bcp14">SHOULD</span> be used to scope the possible user revocation list to only users authorized to the client as described in <a href="#revocation-request-authentication" class="auto internal xref">Section 6.1</a>.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
 <p id="section-6.2-4">For example, a multi-tenant identity provider that uses different signing keys for users associated with different tenants, can also use the same signing keys to authenticate revocation requests, such as creating a JWT to use as client authentication as described in <span>[<a href="#RFC7523" class="cite xref">RFC7523</a>]</span>. This enables the authorization server receiving the request to only accept revocation requests for users that are associated with the particular tenant at the identity provider.<a href="#section-6.2-4" class="pilcrow">¶</a></p>
 </section>
@@ -1519,6 +1518,7 @@ server is able to revoke an access token by removing it from storage. In the for
 </div>
 </section>
 </div>
+<div id="sec-combined-references">
 <section id="section-8">
       <h2 id="name-references">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-references" class="section-name selfRef">References</a>
@@ -1531,7 +1531,7 @@ server is able to revoke an access token by removing it from storage. In the for
 <dl class="references">
 <dt id="IANA.oauth-parameters">[IANA.oauth-parameters]</dt>
         <dd>
-<span class="refAuthor">IANA</span>, <span class="refTitle">"OAuth Parameters"</span>, <span>&lt;<a href="http://www.iana.org/assignments/oauth-parameters">http://www.iana.org/assignments/oauth-parameters</a>&gt;</span>. </dd>
+<span class="refAuthor">IANA</span>, <span class="refTitle">"OAuth Parameters"</span>, <span>&lt;<a href="https://www.iana.org/assignments/oauth-parameters">https://www.iana.org/assignments/oauth-parameters</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
@@ -1564,7 +1564,7 @@ server is able to revoke an access token by removing it from storage. In the for
 <dl class="references">
 <dt id="I-D.ietf-oauth-status-list">[I-D.ietf-oauth-status-list]</dt>
         <dd>
-<span class="refAuthor">Looker, T.</span>, <span class="refAuthor">Bastian, P.</span>, and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"Token Status List"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-oauth-status-list-02</span>, <time datetime="2024-03-03" class="refDate">3 March 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-02">https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-02</a>&gt;</span>. </dd>
+<span class="refAuthor">Looker, T.</span>, <span class="refAuthor">Bastian, P.</span>, and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"Token Status List"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-oauth-status-list-03</span>, <time datetime="2024-07-08" class="refDate">8 July 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-03">https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-03</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="OpenID">[OpenID]</dt>
         <dd>
@@ -1590,6 +1590,7 @@ server is able to revoke an access token by removing it from storage. In the for
 </section>
 </div>
 </section>
+</div>
 <div id="relationship-to-related-specifications">
 <section id="appendix-A">
       <h2 id="name-relationship-to-related-spe">
@@ -1623,8 +1624,9 @@ server is able to revoke an access token by removing it from storage. In the for
 <p id="appendix-A.3-1"><a href="https://openid.net/specs/openid-connect-backchannel-1_0.html">OpenID Connect Back-Channel Logout</a> provides a mechanism for an OpenID Provider to log users out of a Relying Party by making a back-channel POST request containing the user identifier of the user to log out.<a href="#appendix-A.3-1" class="pilcrow">¶</a></p>
 <p id="appendix-A.3-2">This is the most similar existing logout specification to Global Token Revocation. However, there are still a few key differences that make it insufficient for the use cases enabled by Global Token Revocation.<a href="#appendix-A.3-2" class="pilcrow">¶</a></p>
 <p id="appendix-A.3-3">OpenID Connect Back-Channel Logout requires Relying Parties to clear state of any sessions for the user, but doesn't mention anything about access tokens. It also says that refresh tokens issued with the <code>offline_access</code> scope "<span class="bcp14">SHOULD NOT</span> be revoked". This is a concretely different outcome than is described by Global Token Revocation, which requires the revocation of all refresh tokens for the user regardless of whether the refresh token was issued with the <code>offline_access</code> scope.<a href="#appendix-A.3-3" class="pilcrow">¶</a></p>
-<p id="appendix-A.3-4">Additionally, OpenID Connect Back-Channel Logout assumes that the Relying Party implements OpenID Connect, which creates implementation challenges to use it when the Relying Party actually integrates with the identity provider using other specifications such as SAML.<a href="#appendix-A.3-4" class="pilcrow">¶</a></p>
-<p id="appendix-A.3-5">Global Token Revocation works regardless of the protocol that the user uses to authenticate, so works equally well with OpenID Connect and SAML integrations.<a href="#appendix-A.3-5" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-4">OpenID Connect Back-Channel Logout also assumes that the Relying Party implements OpenID Connect, which creates implementation challenges to use it when the Relying Party actually integrates with the identity provider using other specifications such as SAML.<a href="#appendix-A.3-4" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-5">Additionally, OpenID Connect Back-Channel Logout identifies the user using the <code>sub</code> claim of an ID token. This limits the applicability, since there is no mechanism to identify the user by email address or other identifier that might be known between the identity provider and authorization server. Global Token Revocation instead relies on Security Event Token Subject Identifiers (<span>[<a href="#RFC9493" class="cite xref">RFC9493</a>]</span>) which provide multiple options for identifying the user.<a href="#appendix-A.3-5" class="pilcrow">¶</a></p>
+<p id="appendix-A.3-6">Global Token Revocation works regardless of the protocol that the user uses to authenticate, so works equally well with OpenID Connect and SAML integrations.<a href="#appendix-A.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="shared-signals-framework">
@@ -1646,43 +1648,52 @@ server is able to revoke an access token by removing it from storage. In the for
 <a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-document-history" class="section-name selfRef">Document History</a>
       </h2>
 <p id="appendix-B-1">(( To be removed from the final specification ))<a href="#appendix-B-1" class="pilcrow">¶</a></p>
-<p id="appendix-B-2">-03<a href="#appendix-B-2" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">-04<a href="#appendix-B-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="appendix-B-3.1">
-          <p id="appendix-B-3.1.1">Renamed property from <code>subject</code> to <code>sub_id</code> for consistency with JWT claim name defined in RFC9493<a href="#appendix-B-3.1.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-3.1.1">Edits for clarity<a href="#appendix-B-3.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-B-3.2">
-          <p id="appendix-B-3.2.1">Added reference to draft-ietf-oauth-status-list<a href="#appendix-B-3.2.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="appendix-B-3.3">
-          <p id="appendix-B-3.3.1">Added additional security considerations for authentication of the revocation request and malicious authorization servers<a href="#appendix-B-3.3.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-3.2.1">Fixed prose description renaming <code>subject</code> to <code>sub_id</code><a href="#appendix-B-3.2.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="appendix-B-4">-02<a href="#appendix-B-4" class="pilcrow">¶</a></p>
+<p id="appendix-B-4">-03<a href="#appendix-B-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="appendix-B-5.1">
-          <p id="appendix-B-5.1.1">Added security consideration around enumeration of user accounts<a href="#appendix-B-5.1.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-5.1.1">Renamed property from <code>subject</code> to <code>sub_id</code> for consistency with JWT claim name defined in RFC9493<a href="#appendix-B-5.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-B-5.2">
-          <p id="appendix-B-5.2.1">Added an appendix describing the differences between this and related logout specifications<a href="#appendix-B-5.2.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-5.2.1">Added reference to draft-ietf-oauth-status-list<a href="#appendix-B-5.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-B-5.3">
+          <p id="appendix-B-5.3.1">Added additional security considerations for authentication of the revocation request and malicious authorization servers<a href="#appendix-B-5.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="appendix-B-6">-01<a href="#appendix-B-6" class="pilcrow">¶</a></p>
+<p id="appendix-B-6">-02<a href="#appendix-B-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="appendix-B-7.1">
-          <p id="appendix-B-7.1.1">Clarified revocation expectations<a href="#appendix-B-7.1.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-7.1.1">Added security consideration around enumeration of user accounts<a href="#appendix-B-7.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-B-7.2">
-          <p id="appendix-B-7.2.1">Better definition of endpoint<a href="#appendix-B-7.2.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="appendix-B-7.3">
-          <p id="appendix-B-7.3.1">Added section defining endpoint in Authorization Server Metadata<a href="#appendix-B-7.3.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-7.2.1">Added an appendix describing the differences between this and related logout specifications<a href="#appendix-B-7.2.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="appendix-B-8">-00<a href="#appendix-B-8" class="pilcrow">¶</a></p>
+<p id="appendix-B-8">-01<a href="#appendix-B-8" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="appendix-B-9.1">
-          <p id="appendix-B-9.1.1">Initial Draft<a href="#appendix-B-9.1.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-9.1.1">Clarified revocation expectations<a href="#appendix-B-9.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-B-9.2">
+          <p id="appendix-B-9.2.1">Better definition of endpoint<a href="#appendix-B-9.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-B-9.3">
+          <p id="appendix-B-9.3.1">Added section defining endpoint in Authorization Server Metadata<a href="#appendix-B-9.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="appendix-B-10">-00<a href="#appendix-B-10" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-B-11.1">
+          <p id="appendix-B-11.1.1">Initial Draft<a href="#appendix-B-11.1.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
