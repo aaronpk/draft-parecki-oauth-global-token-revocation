@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-11-12T00:54:33.481629+00:00",
+  "timestamp": "2024-11-14T00:55:44.933950+00:00",
   "repo": "aaronpk/global-token-revocation",
   "labels": [
     {
@@ -64,6 +64,22 @@
       "createdAt": "2023-12-20T19:21:14Z",
       "updatedAt": "2024-03-02T01:05:19Z",
       "closedAt": "2024-03-02T01:05:19Z",
+      "comments": []
+    },
+    {
+      "number": 3,
+      "id": "I_kwDOKrR-186eHHrw",
+      "title": "denial of service in security considerations?",
+      "url": "https://github.com/aaronpk/global-token-revocation/issues/3",
+      "state": "OPEN",
+      "author": "sdesen",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Is it appropriate to add a ddos risk along with the account enumeration risk, or is that an implementation detail of the auth server. (malicious server continuously revokes all new sessions)",
+      "createdAt": "2024-11-12T16:19:30Z",
+      "updatedAt": "2024-11-12T16:19:30Z",
+      "closedAt": null,
       "comments": []
     }
   ],
