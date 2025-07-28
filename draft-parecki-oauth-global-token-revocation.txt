@@ -24,10 +24,11 @@ About This Document
    This note is to be removed before publishing as an RFC.
 
    The latest revision of this draft can be found at
-   https://drafts.aaronpk.com/global-token-revocation/draft-parecki-
-   oauth-global-token-revocation.html.  Status information for this
-   document may be found at https://datatracker.ietf.org/doc/draft-
-   parecki-oauth-global-token-revocation/.
+   https://drafts.aaronpk.com/draft-parecki-oauth-global-token-
+   revocation/draft-parecki-oauth-global-token-revocation.html.  Status
+   information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-parecki-oauth-global-token-
+   revocation/.
 
    Discussion of this document takes place on the Web Authorization
    Protocol Working Group mailing list (mailto:oauth@ietf.org), which is
@@ -35,7 +36,8 @@ About This Document
    Subscribe at https://www.ietf.org/mailman/listinfo/oauth/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/aaronpk/global-token-revocation.
+   https://github.com/aaronpk/draft-parecki-oauth-global-token-
+   revocation.
 
 Status of This Memo
 
