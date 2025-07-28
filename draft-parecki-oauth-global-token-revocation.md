@@ -19,8 +19,8 @@ venue:
   type: "Working Group"
   mail: "oauth@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/oauth/"
-  github: "aaronpk/global-token-revocation"
-  latest: "https://drafts.aaronpk.com/global-token-revocation/draft-parecki-oauth-global-token-revocation.html"
+  github: "aaronpk/draft-parecki-oauth-global-token-revocation"
+  latest: "https://drafts.aaronpk.com/draft-parecki-oauth-global-token-revocation/draft-parecki-oauth-global-token-revocation.html"
 
 author:
  -
