@@ -42,9 +42,9 @@ informative:
   RFC9068:
   I-D.ietf-oauth-status-list:
   OpenID:
-    title: OpenID Connect Core 1.0
+    title: OpenID Connect Core 1.0 incorporating errata set 2
     target: https://openid.net/specs/openid-connect-core-1_0.html
-    date: November 8, 2014
+    date: December 15, 2023
     author:
       - ins: N. Sakimura
       - ins: J. Bradley
@@ -55,16 +55,16 @@ informative:
 
 --- abstract
 
-Global Token Revocation enables parties such as a security incident management tool or an external Identity Provider to send a request to an Authorization Server to indicate that it should revoke all of the user's existing tokens and require that the user re-authenticates before issuing new tokens.
+Global Token Revocation enables parties such as a security incident management tool or an external Identity Provider to send a request to an Authorization Server to indicate that it should revoke all of a user's existing tokens and require that the user re-authenticates before issuing new tokens.
 
 
 --- middle
 
 # Introduction
 
-An OAuth Authorization Server issues tokens in response to a user authorizing a client. A party external to the OAuth Authorization Server may wish to instruct the Authorization Server to revoke all tokens belonging to a particular user, and prevent the server from issuing new tokens until the user re-authenticates.
+An OAuth Authorization Server issues tokens in response to a user authorizing a client. A party external to the OAuth Authorization Server may wish to instruct the Authorization Server to revoke all tokens belonging to a particular user, and prevent the server from issuing new tokens for that user until the user re-authenticates.
 
-For example, a security incident management tool may detect anomalous behaviour on a user's account, or if the user logged in through an enterprise Identity Provider, the Identity Provider may want to revoke all of a user's tokens in the event of a security incident or on the employee's termination.
+For example, a security incident management tool may detect anomalous behaviour on a user's account, or if the user logged in through an enterprise Identity Provider, the Identity Provider may want to revoke all of a user's tokens in the event of a security incident or upon the employee's termination.
 
 This specification describes a new API endpoint on an Authorization Server that can accept requests from external parties to revoke all tokens associated with a given user.
 
@@ -91,7 +91,7 @@ TODO: Replace RFC6749 references with OAuth 2.1
 
 ## Roles
 
-In a typical OAuth deployment, the OAuth client obtains tokens from the authorization server when a user logs in and authorizes the client. In many cases, the method by which a user logs in at the authorization server is through an external identity provider.
+In a typical OAuth deployment, the OAuth client obtains tokens from the authorization server when a user logs in and authorizes the client. In many cases, the method by which a user authenticates at the authorization server is through an external identity provider.
 
 For example, a mobile chat application is an OAuth Client, and obtains tokens from its backend server which stores the chat messages. The mobile chat backend plays the OAuth roles of "Resource Server" and "Authorization Server".
 
@@ -101,7 +101,7 @@ In some cases, the user will log in to the Authorization Server using an externa
 
 # Token Revocation
 
-A revocation request is a POST request containing a subject identifier to the Global Token Revocation endpoint, which starts the process of revoking all tokens for the identified subject.
+A revocation request is an HTTP POST request containing a subject identifier to the Global Token Revocation endpoint, which starts the process of revoking all tokens for the identified subject.
 
 ## Revocation Endpoint
 
@@ -109,7 +109,7 @@ The Global Token Revocation endpoint is a URL at the authorization server which 
 
 If the authorization server supports OAuth Server Metadata ({{RFC8414}}), the authorization server SHOULD include the URL of their Global Token Revocation endpoint in their authorization server metadata document using the `global_token_revocation_endpoint` parameter as defined in {{authorization-server-metadata}}.
 
-The authorization server MAY alternatively register the endpoint with tools that will use it.
+The authorization server MAY alternatively register the endpoint directly with tools that will use it.
 
 
 ## Revocation Request {#revocation-request}
@@ -120,7 +120,7 @@ In practice, this means the value of `sub_id` is a JSON object with a property `
 
 The request MUST also be authenticated, the particular authentication method and means by which the authentication is established is out of scope of this specification, but may include OAuth 2.0 Bearer Token {{RFC6750}} or a client authentication JWT {{RFC7523}}.
 
-The following example requests that all tokens for a user identified by an email address be revoked:
+The following example requests that all tokens for a user identified by an email address be revoked using the Email Identifier Format as defined in {{Section 3.2.2 of RFC9493}}:
 
     POST /global-token-revocation
     Host: example.com
@@ -134,7 +134,7 @@ The following example requests that all tokens for a user identified by an email
       }
     }
 
-If the user identifier at the authorization server is known by the system making the revocation request, the request can use the "Opaque Identifer" format to provide the user identifier:
+If the user identifier at the authorization server is known by the system making the revocation request, the request can use the "Opaque Identifer" format as defined in {{Section 3.2.4 of RFC9493}} to provide the user identifier:
 
     POST /global-token-revocation
     Host: example.com
@@ -148,7 +148,7 @@ If the user identifier at the authorization server is known by the system making
       }
     }
 
-If it is expected that the authorization server knows about the user identifier at the IdP, the request can use the "Issuer and Subject Identifier" format:
+If it is expected that the authorization server knows about the user identifier at the IdP, the request can use the "Issuer and Subject Identifier" format as defined in {{Section 3.2.3 of RFC9493}}:
 
     POST /global-token-revocation
     Host: example.com
@@ -200,7 +200,7 @@ access tokens.  The access tokens may be self-contained (e.g. {{RFC9068}}) so th
 resource server needs no further interaction with an authorization
 server issuing these tokens to perform an authorization decision of
 the client requesting access to a protected resource.  A system
-design may, however, instead use access tokens that are handles (also known as "reference tokens")
+design may, however, instead use access tokens that are handles (commonly referred to as "reference tokens")
 referring to authorization data stored at the authorization server.
 
 While these are not the only options, they illustrate the
@@ -218,7 +218,7 @@ The following authorization server metadata parameters {{RFC8414}} are introduce
 : The URL of the authorization server's global token revocation endpoint.
 
 "global_token_revocation_endpoint_auth_methods_supported":
-: OPTIONAL. JSON array containing a list of client authentication methods supported by this introspection endpoint.  The valid client authentication method values are those registered in the IANA "OAuth Token Endpoint Authentication Methods" registry {{IANA.oauth-parameters}} or those registered in the IANA "OAuth Access Token Types" registry {{IANA.oauth-parameters}}.  (These values are and will remain distinct, due to Section 7.2.)  If omitted, the set of supported authentication methods MUST be determined by other means.
+: OPTIONAL. JSON array containing a list of client authentication methods supported by this introspection endpoint.  The valid client authentication method values are those registered in the IANA "OAuth Token Endpoint Authentication Methods" registry {{IANA.oauth-parameters}} or those registered in the IANA "OAuth Access Token Types" registry {{IANA.oauth-parameters}}.  (These values are and will remain distinct, due to {{Section 7.2 of RFC8414}}.)  If omitted, the set of supported authentication methods MUST be determined by other means.
 
 
 # Security Considerations
@@ -229,7 +229,7 @@ While {{revocation-request}} requires that the revocation request is an authenti
 
 Since the revocation request ultimately has wide-reaching effects (a user is expected to be logged out of all devices), this presents a new Denial of Service attack vector. As such, the authentication used for this request SHOULD be narrowly scoped to avoid granting unnecessary privileges to the caller.
 
-For example, if using OAuth Bearer Tokens, the token SHOULD be issued with a single scope that enables it to perform the revocation request, and no other type of token issued should include this scope.
+For example, if using OAuth Bearer Tokens, the token SHOULD be issued with a single scope that enables it to perform only the revocation request, and no other type of token issued should include this scope.
 
 If the authorization server is multi-tenant (supports multiple customers) through different identity providers, each identity provider SHOULD use its own scoped credential that is only authorized to revoke tokens for users within the same tenant.
 
@@ -326,6 +326,11 @@ Lastly, it is more complex to set up a receiver for CAEP and RISC events compare
 # Document History
 
 (( To be removed from the final specification ))
+
+-05
+
+* Editorial clarifications
+* Added specific references to subject identifier formats
 
 -04
 
