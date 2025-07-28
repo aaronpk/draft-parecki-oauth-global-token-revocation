@@ -4,8 +4,8 @@
 
 Web Authorization Protocol                                    A. Parecki
 Internet-Draft                                                      Okta
-Intended status: Standards Track                        10 February 2025
-Expires: 14 August 2025
+Intended status: Standards Track                            28 July 2025
+Expires: 29 January 2026
 
 
                         Global Token Revocation
@@ -15,7 +15,7 @@ Abstract
 
    Global Token Revocation enables parties such as a security incident
    management tool or an external Identity Provider to send a request to
-   an Authorization Server to indicate that it should revoke all of the
+   an Authorization Server to indicate that it should revoke all of a
    user's existing tokens and require that the user re-authenticates
    before issuing new tokens.
 
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 August 2025.
+   This Internet-Draft will expire on 29 January 2026.
 
 Copyright Notice
 
@@ -107,13 +107,13 @@ Table of Contents
    authorizing a client.  A party external to the OAuth Authorization
    Server may wish to instruct the Authorization Server to revoke all
    tokens belonging to a particular user, and prevent the server from
-   issuing new tokens until the user re-authenticates.
+   issuing new tokens for that user until the user re-authenticates.
 
    For example, a security incident management tool may detect anomalous
    behaviour on a user's account, or if the user logged in through an
    enterprise Identity Provider, the Identity Provider may want to
    revoke all of a user's tokens in the event of a security incident or
-   on the employee's termination.
+   upon the employee's termination.
 
    This specification describes a new API endpoint on an Authorization
    Server that can accept requests from external parties to revoke all
@@ -147,8 +147,8 @@ Table of Contents
 
    In a typical OAuth deployment, the OAuth client obtains tokens from
    the authorization server when a user logs in and authorizes the
-   client.  In many cases, the method by which a user logs in at the
-   authorization server is through an external identity provider.
+   client.  In many cases, the method by which a user authenticates at
+   the authorization server is through an external identity provider.
 
    For example, a mobile chat application is an OAuth Client, and
    obtains tokens from its backend server which stores the chat
@@ -163,7 +163,7 @@ Table of Contents
 
 3.  Token Revocation
 
-   A revocation request is a POST request containing a subject
+   A revocation request is an HTTP POST request containing a subject
    identifier to the Global Token Revocation endpoint, which starts the
    process of revoking all tokens for the identified subject.
 
@@ -180,8 +180,8 @@ Table of Contents
    metadata document using the global_token_revocation_endpoint
    parameter as defined in Section 5.
 
-   The authorization server MAY alternatively register the endpoint with
-   tools that will use it.
+   The authorization server MAY alternatively register the endpoint
+   directly with tools that will use it.
 
 3.2.  Revocation Request
 
@@ -200,7 +200,8 @@ Table of Contents
    [RFC6750] or a client authentication JWT [RFC7523].
 
    The following example requests that all tokens for a user identified
-   by an email address be revoked:
+   by an email address be revoked using the Email Identifier Format as
+   defined in Section 3.2.2 of [RFC9493]:
 
    POST /global-token-revocation
    Host: example.com
@@ -216,7 +217,8 @@ Table of Contents
 
    If the user identifier at the authorization server is known by the
    system making the revocation request, the request can use the "Opaque
-   Identifer" format to provide the user identifier:
+   Identifer" format as defined in Section 3.2.4 of [RFC9493] to provide
+   the user identifier:
 
    POST /global-token-revocation
    Host: example.com
@@ -232,7 +234,7 @@ Table of Contents
 
    If it is expected that the authorization server knows about the user
    identifier at the IdP, the request can use the "Issuer and Subject
-   Identifier" format:
+   Identifier" format as defined in Section 3.2.3 of [RFC9493]:
 
    POST /global-token-revocation
    Host: example.com
@@ -298,8 +300,8 @@ Table of Contents
    with an authorization server issuing these tokens to perform an
    authorization decision of the client requesting access to a protected
    resource.  A system design may, however, instead use access tokens
-   that are handles (also known as "reference tokens") referring to
-   authorization data stored at the authorization server.
+   that are handles (commonly referred to as "reference tokens")
+   referring to authorization data stored at the authorization server.
 
    While these are not the only options, they illustrate the
    implications for revocation.  In the latter case of reference tokens,
@@ -331,9 +333,9 @@ Table of Contents
       "OAuth Token Endpoint Authentication Methods" registry
       [IANA.oauth-parameters] or those registered in the IANA "OAuth
       Access Token Types" registry [IANA.oauth-parameters].  (These
-      values are and will remain distinct, due to Section 7.2.)  If
-      omitted, the set of supported authentication methods MUST be
-      determined by other means.
+      values are and will remain distinct, due to Section 7.2 of
+      [RFC8414].)  If omitted, the set of supported authentication
+      methods MUST be determined by other means.
 
 6.  Security Considerations
 
@@ -350,7 +352,7 @@ Table of Contents
    unnecessary privileges to the caller.
 
    For example, if using OAuth Bearer Tokens, the token SHOULD be issued
-   with a single scope that enables it to perform the revocation
+   with a single scope that enables it to perform only the revocation
    request, and no other type of token issued should include this scope.
 
    If the authorization server is multi-tenant (supports multiple
@@ -467,13 +469,14 @@ Table of Contents
 
    [I-D.ietf-oauth-status-list]
               Looker, T., Bastian, P., and C. Bormann, "Token Status
-              List", Work in Progress, Internet-Draft, draft-ietf-oauth-
-              status-list-07, 2 February 2025,
+              List (TSL)", Work in Progress, Internet-Draft, draft-ietf-
+              oauth-status-list-12, 7 July 2025,
               <https://datatracker.ietf.org/doc/html/draft-ietf-oauth-
-              status-list-07>.
+              status-list-12>.
 
    [OpenID]   Sakimura, N., Bradley, J., Jones, M., de Medeiros, B., and
-              C. Mortimore, "OpenID Connect Core 1.0", November 2014,
+              C. Mortimore, "OpenID Connect Core 1.0 incorporating
+              errata set 2", December 2023,
               <https://openid.net/specs/openid-connect-core-1_0.html>.
 
    [RFC6750]  Jones, M. and D. Hardt, "The OAuth 2.0 Authorization
@@ -603,6 +606,12 @@ A.4.  Shared Signals Framework
 Appendix B.  Document History
 
    (( To be removed from the final specification ))
+
+   -05
+
+   *  Editorial clarifications
+
+   *  Added specific references to subject identifier formats
 
    -04
 
